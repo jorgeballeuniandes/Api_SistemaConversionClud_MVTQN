@@ -13,7 +13,7 @@ class Tarea(db.Model):
     nombre_archivo = db.Column(db.String(128))
     nuevo_formato = db.Column(db.String(30))
     estado = db.Column(db.String(30))
-    time_stamp = db.Column(db.DateTime())    
+    time_stamp = db.Column(db.String(30))
     usuario = db.Column(db.Integer, db.ForeignKey("usuario.id"))
 
 

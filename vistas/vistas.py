@@ -2,13 +2,15 @@ from flask import request
 from flask_jwt_extended import jwt_required, create_access_token
 from flask_restful import Resource
 from sqlalchemy.exc import IntegrityError
+from os import getcwd
 
 from modelos import db, Tarea, Usuario
 from modelos.modelos import TareaSchema, UsuarioSchema
+import datetime
 
 tarea_schema = TareaSchema()
 usuario_schema = UsuarioSchema()
-
+PATH_FILE= getcwd
 
 class VistaSignIn(Resource):
 
@@ -44,6 +46,25 @@ class VistaLogIn(Resource):
             token_de_acceso = create_access_token(identity=usuario.id)
             return {"mensaje": "Inicio de sesión exitoso", "token": token_de_acceso}
 
+class Subir_archivos(Resource):
+
+    def post (self):
+
+        file = request.files['file']
+        file.save("./archivos_originales/{}".format(file.filename))
+
+        
+class Task_create(Resource):
+    def post (self):
+        nueva_tarea = Tarea(nombre_archivo = request.json["nombre_archivo"], nuevo_formato =request.json["nuevo_f"],time_stamp=datetime.datetime.now(),estado="uploaded",usuario=1)
+        db.session.add(nueva_tarea)
+        db.session.commit()
+        return {"mensaje": "la tarea se ha creado exitosamente", "Archivo": nueva_tarea.nombre_archivo, "formato": nueva_tarea.nuevo_formato}
+
+    
+        
+
+# class VistaTarea(Resource):
 class VistaTareas(Resource):   
     
     @jwt_required()

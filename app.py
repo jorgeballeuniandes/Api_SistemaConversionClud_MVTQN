@@ -4,6 +4,8 @@ from flask_jwt_extended import JWTManager
 from flask_restful import Api
 
 from modelos import db
+from vistas import VistaSignIn, VistaLogIn,Task_create,Subir_archivos
+
 from vistas import VistaSignIn, VistaLogIn
 from vistas.vistas import VistaTareas, VistaTarea
 
@@ -22,6 +24,9 @@ db.create_all()
 cors = CORS(app)
 
 api = Api(app)
+
+api.add_resource(Task_create,'/newTask')
+api.add_resource(Subir_archivos,'/uploadFile')
 api.add_resource(VistaSignIn, '/auth/signup')
 api.add_resource(VistaLogIn, '/auth/login')
 api.add_resource(VistaTareas, '/tasks')
