@@ -53,3 +53,16 @@ class VistaTareas(Resource):
             print(tarea)
         return [tarea_schema.dump(tarea) for tarea in Tarea.query.all()]
 
+class VistaTarea(Resource):   
+    
+    @jwt_required()
+    def get(self, id_tarea):
+        return tarea_schema.dump(Tarea.query.get_or_404(id_tarea))
+    
+    @jwt_required()
+    def delete(self, id_tarea):
+        tarea = Tarea.query.get_or_404(id_tarea)
+        db.session.delete(tarea)
+        db.session.commit()
+        return '', 204
+
