@@ -109,6 +109,9 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+#base de datos 
+
+conversiones.db
 
 # Spyder project settings
 .spyderproject
