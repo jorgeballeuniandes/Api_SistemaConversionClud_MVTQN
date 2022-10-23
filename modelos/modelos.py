@@ -11,7 +11,7 @@ db = SQLAlchemy()
 class Tarea(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nombre_archivo = db.Column(db.String(128))
-    nuveo_formato = db.Column(db.String(30))
+    nuevo_formato = db.Column(db.String(30))
     estado = db.Column(db.String(30))
     time_stamp = db.Column(db.DateTime)
     
