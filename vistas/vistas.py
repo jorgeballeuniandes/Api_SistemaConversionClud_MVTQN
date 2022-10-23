@@ -48,16 +48,21 @@ class VistaTareas(Resource):
     
     @jwt_required()
     def get(self):
-        print('hola')
-        for tarea in Tarea.query.all():
-            print(tarea)
         return [tarea_schema.dump(tarea) for tarea in Tarea.query.all()]
 
 class VistaTarea(Resource):   
     
     @jwt_required()
     def get(self, id_tarea):
-        return tarea_schema.dump(Tarea.query.get_or_404(id_tarea))
+        return tarea_schema.dump(Tarea.query.get_or_404(id_tarea))    
+
+    @jwt_required()
+    def put(self, id_tarea):
+        tarea = Tarea.query.get_or_404(id_tarea)
+        tarea.nuevo_formato = request.json.get("nuevo_formato", tarea.nuevo_formato)
+        tarea.estado = request.json.get("estado", tarea.estado)
+        db.session.commit()
+        return tarea_schema.dump(tarea)
     
     @jwt_required()
     def delete(self, id_tarea):
