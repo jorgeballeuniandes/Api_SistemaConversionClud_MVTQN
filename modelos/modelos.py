@@ -35,6 +35,7 @@ class TareaSchema(SQLAlchemyAutoSchema):
         model = Tarea
         include_relationships = True
         load_instance = True
+    time_stamp = fields.String()
 
 
 

@@ -65,32 +65,25 @@ class Task_create(Resource):
         
 
 # class VistaTarea(Resource):
+class VistaTareas(Resource):   
+    
+    @jwt_required()
+    def get(self):
+        print('hola')
+        for tarea in Tarea.query.all():
+            print(tarea)
+        return [tarea_schema.dump(tarea) for tarea in Tarea.query.all()]
 
-#     @jwt_required()
-#     def get(self, id_tarea):
-#         return tarea_schema.dump(Tarea.query.get_or_404(id_tarea))
+class VistaTarea(Resource):   
+    
+    @jwt_required()
+    def get(self, id_tarea):
+        return tarea_schema.dump(Tarea.query.get_or_404(id_tarea))
+    
+    @jwt_required()
+    def delete(self, id_tarea):
+        tarea = Tarea.query.get_or_404(id_tarea)
+        db.session.delete(tarea)
+        db.session.commit()
+        return '', 204
 
-#     @jwt_required()
-#     def put(self, id_tarea):
-#         carrera = Tarea.query.get_or_404(id_tarea)
-#         carrera.nombre_carrera = request.json.get("nombre", carrera.nombre_carrera)
-#         carrera.competidores = []
-
-#         for item in request.json["competidores"]:
-#             probabilidad = float(item["probabilidad"])
-#             cuota = round((probabilidad / (1 - probabilidad)), 2)
-#             competidor = Competidor(nombre_competidor=item["competidor"],
-#                                     probabilidad=probabilidad,
-#                                     cuota=cuota,
-#                                     id_carrera=carrera.id)
-#             carrera.competidores.append(competidor)
-
-#         db.session.commit()
-#         return carrera_schema.dump(carrera)
-
-#     @jwt_required()
-#     def delete(self, id_carrera):
-#         carrera = Carrera.query.get_or_404(id_carrera)
-#         db.session.delete(carrera)
-#         db.session.commit()
-#         return '', 204
