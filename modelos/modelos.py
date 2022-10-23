@@ -13,8 +13,7 @@ class Tarea(db.Model):
     nombre_archivo = db.Column(db.String(128))
     nuevo_formato = db.Column(db.String(30))
     estado = db.Column(db.String(30))
-    time_stamp = db.Column(db.DateTime)
-    
+    time_stamp = db.Column(db.DateTime())    
     usuario = db.Column(db.Integer, db.ForeignKey("usuario.id"))
 
 
@@ -36,6 +35,7 @@ class TareaSchema(SQLAlchemyAutoSchema):
         model = Tarea
         include_relationships = True
         load_instance = True
+    time_stamp = fields.String()
 
 
 
