@@ -56,7 +56,7 @@ class Subir_archivos(Resource):
         
 class Task_create(Resource):
     def post (self):
-        nueva_tarea = Tarea(nombre_archivo = request.json["nombre_archivo"], nuevo_formato =request.json["nuevo_f"],time_stamp=datetime.datetime.now(),estado="uploaded",usuario=1)
+        nueva_tarea = Tarea(nombre_archivo = request.json["nombre_archivo"], nuevo_formato =request.json["nuevo_f"],time_stamp=datetime.datetime.now(),estado="uploaded")
         db.session.add(nueva_tarea)
         db.session.commit()
         return {"mensaje": "la tarea se ha creado exitosamente", "Archivo": nueva_tarea.nombre_archivo, "formato": nueva_tarea.nuevo_formato}
