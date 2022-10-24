@@ -3,6 +3,7 @@ from flask_jwt_extended import jwt_required, create_access_token
 from flask_restful import Resource
 from sqlalchemy.exc import IntegrityError
 from os import getcwd
+import os 
 
 from modelos import db, Tarea, Usuario
 from modelos.modelos import TareaSchema, UsuarioSchema
@@ -47,7 +48,7 @@ class VistaLogIn(Resource):
             return {"mensaje": "Inicio de sesión exitoso", "token": token_de_acceso}
 
 class Subir_archivos(Resource):
-
+    @jwt_required()
     def post (self):
 
         file = request.files['file']
@@ -55,6 +56,7 @@ class Subir_archivos(Resource):
 
         
 class Task_create(Resource):
+    @jwt_required()
     def post (self):
         nueva_tarea = Tarea(nombre_archivo = request.json["nombre_archivo"], nuevo_formato =request.json["nuevo_f"],time_stamp=datetime.datetime.now(),estado="uploaded")
         db.session.add(nueva_tarea)
@@ -91,4 +93,16 @@ class VistaTarea(Resource):
         db.session.delete(tarea)
         db.session.commit()
         return '', 204
+    
+class Convertir(Resource):
+
+    def post(self):
+        
+        for tarea in Tarea.query.all():
+            if (tarea.estado == "uploaded"):
+                os.system('ffmpeg -i ~/Documents/Maestria/II_semestre/cloud_desarrollo/proyecto/Api_SistemaConversionClud_MVTQN/archivos_originales/{} ~/Documents/Maestria/II_semestre/cloud_desarrollo/proyecto/Api_SistemaConversionClud_MVTQN/archivos_procesados/{}'.format(tarea.nombre_archivo,tarea.nombre_archivo.split(".")[0]+"."+tarea.nuevo_formato))
+                tarea.estado = "processed"
+                db.session.commit()
+            
+    
 

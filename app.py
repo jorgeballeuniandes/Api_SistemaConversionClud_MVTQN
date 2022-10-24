@@ -4,7 +4,7 @@ from flask_jwt_extended import JWTManager
 from flask_restful import Api
 
 from modelos import db
-from vistas import VistaSignIn, VistaLogIn,Task_create,Subir_archivos
+from vistas import VistaSignIn, VistaLogIn,Task_create,Subir_archivos,Convertir 
 
 from vistas import VistaSignIn, VistaLogIn
 from vistas.vistas import VistaTareas, VistaTarea
@@ -31,6 +31,7 @@ api.add_resource(VistaSignIn, '/auth/signup')
 api.add_resource(VistaLogIn, '/auth/login')
 api.add_resource(VistaTareas, '/tasks')
 api.add_resource(VistaTarea, '/tasks/<int:id_tarea>')
+api.add_resource(Convertir, '/convertir')
 
 
 jwt = JWTManager(app)
