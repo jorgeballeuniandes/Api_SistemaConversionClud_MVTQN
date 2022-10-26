@@ -5,6 +5,8 @@ from sqlalchemy.exc import IntegrityError
 from os import getcwd
 import os 
 
+
+
 from modelos import db, Tarea, Usuario
 from modelos.modelos import TareaSchema, UsuarioSchema
 import datetime
@@ -100,7 +102,7 @@ class Convertir(Resource):
         
         for tarea in Tarea.query.all():
             if (tarea.estado == "uploaded"):
-                os.system('ffmpeg -i ~/Documents/Maestria/II_semestre/cloud_desarrollo/proyecto/Api_SistemaConversionClud_MVTQN/archivos_originales/{} ~/Documents/Maestria/II_semestre/cloud_desarrollo/proyecto/Api_SistemaConversionClud_MVTQN/archivos_procesados/{}'.format(tarea.nombre_archivo,tarea.nombre_archivo.split(".")[0]+"."+tarea.nuevo_formato))
+                os.system('ffmpeg -i ./archivos_originales/{} ./archivos_procesados/{}'.format(tarea.nombre_archivo,tarea.nombre_archivo.split(".")[0]+"."+tarea.nuevo_formato))
                 tarea.estado = "processed"
                 db.session.commit()
             
