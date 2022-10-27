@@ -4,12 +4,16 @@ from flask_restful import Resource
 from sqlalchemy.exc import IntegrityError
 from os import getcwd
 import os 
-
-
-
 from modelos import db, Tarea, Usuario
 from modelos.modelos import TareaSchema, UsuarioSchema
-import datetime
+from datetime import datetime
+from celery import Celery
+
+celery_app = Celery (__name__,broker = 'redis://localhost:6379/0' )
+@celery_app.task(name="registrar_log")
+def registrar_log(*args):
+    pass
+
 
 tarea_schema = TareaSchema()
 usuario_schema = UsuarioSchema()
@@ -60,7 +64,9 @@ class Subir_archivos(Resource):
 class Task_create(Resource):
     @jwt_required()
     def post (self):
-        nueva_tarea = Tarea(nombre_archivo = request.json["nombre_archivo"], nuevo_formato =request.json["nuevo_f"],time_stamp=datetime.datetime.now(),estado="uploaded")
+        nueva_tarea = Tarea(nombre_archivo = request.json["nombre_archivo"], nuevo_formato =request.json["nuevo_f"],time_stamp=datetime.utcnow(),estado="uploaded")
+        args=(request.json["nombre_archivo"],request.json["nuevo_f"],nueva_tarea.estado)
+        registrar_log.apply_async(args=args, queue ='logs')
         db.session.add(nueva_tarea)
         db.session.commit()
         return {"mensaje": "la tarea se ha creado exitosamente", "Archivo": nueva_tarea.nombre_archivo, "formato": nueva_tarea.nuevo_formato}
