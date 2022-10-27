@@ -1,8 +1,8 @@
-import os
-from ..modelos import db, Tarea 
+from celery import Celery
+import os 
+celery_app = Celery(__name__,broker='redis://localhost:6379/0')
 
-
-
-
-for tarea in Tarea.query.all():
-    os.system('ffmpeg -i ~/Documents/Maestria/II_semestre/cloud_desarrollo/proyecto/Api_SistemaConversionClud_MVTQN/archivos_originales/{} ~/Documents/Maestria/II_semestre/cloud_desarrollo/proyecto/Api_SistemaConversionClud_MVTQN/archivos_procesados/{}'.format(tarea.nombre_archivo,tarea.nombe_archivo.split(".")[0]+tarea.nuevo_formato))
+@celery_app.task(name = 'registrar_log')
+def encolar_tarea(filename,nuevo_formato,estado):
+    if (estado == "uploaded"):
+        os.system('ffmpeg -i ../archivos_originales/{} ../archivos_procesados/{}'.format(filename,filename.split(".")[0]+"."+nuevo_formato))
