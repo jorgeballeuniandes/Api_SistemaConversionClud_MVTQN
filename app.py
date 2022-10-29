@@ -2,15 +2,16 @@ from flask import Flask
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from flask_restful import Api
-
+from pymysql import *
 from modelos import db
 from vistas import VistaSignIn, VistaLogIn,Task_create,Subir_archivos,Convertir 
 
 from vistas import VistaSignIn, VistaLogIn
 from vistas.vistas import VistaTareas, VistaTarea
-
+URL_DB_MYSQL= "mysql+pymysql://jose:jose@localhost/conversioens"
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///conversiones.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = URL_DB_MYSQL
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///conversiones.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_SECRET_KEY'] = 'frase-secreta'
 app.config['PROPAGATE_EXCEPTIONS'] = True
@@ -37,4 +38,4 @@ api.add_resource(Convertir, '/convertir')
 jwt = JWTManager(app)
 
 if __name__ == '__main__':
-    app.run(debug=True, port=7000, host='0.0.0.0')
+     app.run(debug=True, port=7001, host='0.0.0.0')
