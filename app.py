@@ -37,4 +37,4 @@ api.add_resource(Convertir, '/convertir')
 jwt = JWTManager(app)
 
 if __name__ == '__main__':
-     app.run(debug=True, port=7000, host='0.0.0.0')
+     app.run(debug=True, port=7001, host='0.0.0.0')
