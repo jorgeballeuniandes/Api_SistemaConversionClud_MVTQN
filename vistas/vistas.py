@@ -65,11 +65,12 @@ class Task_create(Resource):
     @jwt_required()
     def post (self):
         nueva_tarea = Tarea(nombre_archivo = request.json["nombre_archivo"], nuevo_formato =request.json["nuevo_f"],time_stamp=datetime.utcnow(),estado="uploaded")
-        args=(request.json["nombre_archivo"],request.json["nuevo_f"],nueva_tarea.estado)
-        registrar_log.apply_async(args=args, queue ='logs')
         db.session.add(nueva_tarea)
         db.session.commit()
-        return {"mensaje": "la tarea se ha creado exitosamente", "Archivo": nueva_tarea.nombre_archivo, "formato": nueva_tarea.nuevo_formato}
+        
+        args=(request.json["nombre_archivo"],request.json["nuevo_f"],nueva_tarea.estado,nueva_tarea.id)
+        registrar_log.apply_async(args=args, queue ='logs')
+        return {"mensaje": "la tarea se ha creado exitosamente", "Archivo": nueva_tarea.nombre_archivo, "formato": nueva_tarea.nuevo_formato, "id":nueva_tarea.id}
 
     
         
@@ -82,12 +83,11 @@ class VistaTareas(Resource):
         return [tarea_schema.dump(tarea) for tarea in Tarea.query.all()]
 
 class VistaTarea(Resource):   
-    
     @jwt_required()
     def get(self, id_tarea):
         return tarea_schema.dump(Tarea.query.get_or_404(id_tarea))    
 
-    @jwt_required()
+    #@jwt_required()
     def put(self, id_tarea):
         tarea = Tarea.query.get_or_404(id_tarea)
         tarea.nuevo_formato = request.json.get("nuevo_formato", tarea.nuevo_formato)
@@ -111,6 +111,13 @@ class Convertir(Resource):
                 os.system('ffmpeg -i ./archivos_originales/{} ./archivos_procesados/{}'.format(tarea.nombre_archivo,tarea.nombre_archivo.split(".")[0]+"."+tarea.nuevo_formato))
                 tarea.estado = "processed"
                 db.session.commit()
+class CambioStado(Resource):
+    def put(self,id_tarea):
+        tarea = Tarea.query.get_or_404(id_tarea)
+        tarea.estado = request.json.get("estado", tarea.estado)
+        db.session.commit()
+        return tarea_schema.dump(tarea)
+        
             
     
 
