@@ -8,8 +8,15 @@ from modelos import db, Tarea, Usuario
 from modelos.modelos import TareaSchema, UsuarioSchema
 from datetime import datetime
 from celery import Celery
+import os
+from google.cloud import storage
 
-celery_app = Celery (__name__,broker = 'redis://localhost:6379/0' )
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'CloudStorageCredentials.json'
+
+client = storage.Client()
+bucket = client.get_bucket('conversion-bucket-1')
+
+celery_app = Celery (__name__,broker = 'redis://10.158.0.4:6379/0' )
 @celery_app.task(name="registrar_log")
 def registrar_log(*args):
     pass
@@ -56,13 +63,16 @@ class VistaLogIn(Resource):
 class Subir_archivos(Resource):
     @jwt_required()
     def post (self):
-
+		
         file = request.files['file']
-        file.save("./archivos_originales/{}".format(file.filename))
+        file.save("/home/josemani89/archivos_temporal/{}".format(file.filename))
+        blob = bucket.blob(file.filename)
+        blob.upload_from_filename("/home/josemani89/archivos_temporal/{}".format(file.filename))
 
-        
+
+      
 class Task_create(Resource):
-    @jwt_required()
+    #@jwt_required()
     def post (self):
         nueva_tarea = Tarea(nombre_archivo = request.json["nombre_archivo"], nuevo_formato =request.json["nuevo_f"],time_stamp=datetime.utcnow(),estado="uploaded")
         db.session.add(nueva_tarea)
@@ -90,6 +100,8 @@ class VistaTarea(Resource):
     #@jwt_required()
     def put(self, id_tarea):
         tarea = Tarea.query.get_or_404(id_tarea)
+        tarea.nuevo_formato = request.json.get("nuevo_formato", tarea.nuevo_formato)
+        tarea.nuevo_formato = request.json.get("nuevo_formato", tarea.nuevo_formato)
         tarea.nuevo_formato = request.json.get("nuevo_formato", tarea.nuevo_formato)
         tarea.estado = request.json.get("estado", tarea.estado)
         db.session.commit()
@@ -119,5 +131,3 @@ class CambioStado(Resource):
         return tarea_schema.dump(tarea)
         
             
-    
-
