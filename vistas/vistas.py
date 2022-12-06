@@ -10,21 +10,21 @@ from datetime import datetime
 from celery import Celery
 import os
 from google.cloud import storage
-from google.cloud import pubsub_v1
+#from google.cloud import pubsub_v1
 
-project_id = "noted-cider-367004"
-topic_id = "convertir"
+# project_id = "noted-cider-367004"
+# topic_id = "convertir"
 
 
-publisher = pubsub_v1.PublisherClient()
-topic_path = publisher.topic_path(project_id, topic_id)
+# publisher = pubsub_v1.PublisherClient()
+# topic_path = publisher.topic_path(project_id, topic_id)
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'CloudStorageCredentials.json'
 
 client = storage.Client()
 bucket = client.get_bucket('conversion-bucket-1')
 
-celery_app = Celery (__name__,broker = 'redis://10.158.0.4:6379/0' )
-@celery_app.task(name="registrar_log")
+# celery_app = Celery (__name__,broker = 'redis://10.158.0.4:6379/0' )
+# @celery_app.task(name="registrar_log")
 def registrar_log(*args):
     pass
 
@@ -90,11 +90,11 @@ class Task_create(Resource):
         data_str = "Message number"
         # Data must be a bytestring
         data = data_str.encode("utf-8")
-        future = publisher.publish(
-        topic_path, data,
-        filename=request.json["nombre_archivo"] ,nuevo_formato=request.json["nuevo_f"],estado=nueva_tarea.estado,taskid=str(nueva_tarea.id)
-        )
-        print(future.result())
+        # future = publisher.publish(
+        # topic_path, data,
+        # filename=request.json["nombre_archivo"] ,nuevo_formato=request.json["nuevo_f"],estado=nueva_tarea.estado,taskid=str(nueva_tarea.id)
+        # )
+        #print(future.result())
         return {"mensaje": "la tarea se ha creado exitosamente", "Archivo": nueva_tarea.nombre_archivo, "formato": nueva_tarea.nuevo_formato, "id":nueva_tarea.id}
 
     

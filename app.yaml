@@ -1,0 +1,6 @@
+runtime: python39 # or another supported version
+
+
+
+env_variables:
+  BUCKET_NAME: "conversion-bucket-1"
